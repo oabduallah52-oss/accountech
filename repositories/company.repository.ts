@@ -1,10 +1,12 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { CreateCompanyInput } from "@/types/company";
 
 
+// GET COMPANIES
+
 export async function getCompaniesRepository() {
 
-  return prisma.company.findMany({
+  return await prisma.company.findMany({
 
     include: {
       branches: true,
@@ -19,12 +21,13 @@ export async function getCompaniesRepository() {
 }
 
 
+// CREATE COMPANY
 
 export async function createCompanyRepository(
   data: CreateCompanyInput
 ) {
 
-  return prisma.company.create({
+  return await prisma.company.create({
 
     data,
 

@@ -4,13 +4,15 @@ import {
 } from "@/repositories/company.repository";
 
 
-import { CreateCompanyInput } from "@/types/company";
+import {
+  CreateCompanyInput
+} from "@/types/company";
 
 
 
 export async function getCompaniesService(){
 
-  return getCompaniesRepository();
+  return await getCompaniesRepository();
 
 }
 
@@ -20,6 +22,6 @@ export async function createCompanyService(
   data: CreateCompanyInput
 ){
 
-  return createCompanyRepository(data);
+  return await createCompanyRepository(data);
 
 }
