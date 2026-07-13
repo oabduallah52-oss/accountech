@@ -1,6 +1,7 @@
 import {
   getCompaniesRepository,
   createCompanyRepository,
+  updateCompanyRepository,
 } from "@/repositories/company.repository";
 
 
@@ -19,9 +20,23 @@ export async function getCompaniesService(){
 
 
 export async function createCompanyService(
-  data: CreateCompanyInput
+  data:CreateCompanyInput
 ){
 
   return await createCompanyRepository(data);
+
+}
+
+
+
+export async function updateCompanyService(
+  id:number,
+  data:Partial<CreateCompanyInput>
+){
+
+  return await updateCompanyRepository(
+    id,
+    data
+  );
 
 }

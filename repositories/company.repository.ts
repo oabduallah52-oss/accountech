@@ -2,7 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { CreateCompanyInput } from "@/types/company";
 
 
-// GET COMPANIES
+
+// =====================================
+// GET ALL COMPANIES
+// =====================================
 
 export async function getCompaniesRepository() {
 
@@ -21,7 +24,12 @@ export async function getCompaniesRepository() {
 }
 
 
+
+
+
+// =====================================
 // CREATE COMPANY
+// =====================================
 
 export async function createCompanyRepository(
   data: CreateCompanyInput
@@ -32,5 +40,38 @@ export async function createCompanyRepository(
     data,
 
   });
+
+}
+
+
+
+
+
+// =====================================
+// UPDATE COMPANY
+// =====================================
+
+export async function updateCompanyRepository(
+
+  id:number,
+
+  data:Partial<CreateCompanyInput>
+
+) {
+
+
+  return await prisma.company.update({
+
+    where: {
+
+      id,
+
+    },
+
+
+    data,
+
+  });
+
 
 }
