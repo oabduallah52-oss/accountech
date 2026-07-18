@@ -1,194 +1,88 @@
-import {
-  getCompaniesService,
-  createCompanyService,
-  updateCompanyService,
-} from "@/services/company.service";
+import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
+
+const prisma = new PrismaClient();
 
 
-
-// =====================================
 // GET ALL COMPANIES
-// =====================================
-
 export async function GET() {
 
   try {
 
-    const companies = await getCompaniesService();
+    const companies = await prisma.company.findMany({
+      orderBy:{
+        id:"desc"
+      }
+    });
 
 
-    return Response.json(companies);
+    return NextResponse.json(companies);
 
 
-  } catch (error) {
+  } catch(error){
 
+    console.log(error);
 
-    console.error(error);
-
-
-    return Response.json(
+    return NextResponse.json(
       {
-        success:false,
-        message:"Failed to load companies"
+        error:"Failed to fetch companies"
       },
       {
         status:500
       }
     );
 
-
   }
 
 }
 
 
-
-
-
-// =====================================
 // CREATE COMPANY
-// =====================================
+export async function POST(req: Request) {
 
-export async function POST(
-  request:Request
-){
+  const body = await req.json();
 
+  const company = await prisma.company.create({
+    data:{
+      name: body.name
+    }
+  });
 
-  try {
 
+  const accounts = [
+    ["1000","الأصول","ASSET"],
+    ["1100","النقدية والبنوك","ASSET"],
+    ["1200","العملاء","ASSET"],
+    ["1300","المخزون","ASSET"],
 
-    const body = await request.json();
+    ["2000","الالتزامات","LIABILITY"],
+    ["2100","الموردين","LIABILITY"],
+    ["2200","القروض","LIABILITY"],
 
+    ["3000","حقوق الملكية","EQUITY"],
 
+    ["4000","الإيرادات","REVENUE"],
 
-    const company = await createCompanyService(
-      body
-    );
+    ["5000","المصروفات","EXPENSE"],
+    ["5100","مصروفات التشغيل","EXPENSE"],
+    ["5200","الصيانة","EXPENSE"],
+    ["5300","الوقود","EXPENSE"],
+  ];
 
 
+  await prisma.account.createMany({
+    data: accounts.map((a)=>({
+      code:a[0],
+      name:a[1],
+      type:a[2],
+      companyId:company.id
+    }))
+  });
 
-    return Response.json({
 
-      success:true,
-
-      data:company
-
-    });
-
-
-
-  } catch(error){
-
-
-    console.error(error);
-
-
-
-    return Response.json(
-      {
-        success:false,
-        message:"Failed to create company"
-      },
-      {
-        status:500
-      }
-    );
-
-
-  }
-
-
-}
-
-
-
-
-
-
-
-// =====================================
-// UPDATE COMPANY
-// =====================================
-
-export async function PUT(
-  request:Request
-){
-
-
-  try {
-
-
-    const body = await request.json();
-
-
-
-    const company = await updateCompanyService(
-
-      Number(body.id),
-
-      {
-
-        name: body.name,
-
-        legalName: body.legalName,
-
-        industry: body.industry,
-
-        country: body.country,
-
-        currency: body.currency,
-
-        fiscalYear: body.fiscalYear,
-
-        email: body.email ?? null,
-
-        phone: body.phone ?? null,
-
-        address: body.address ?? null,
-
-      }
-
-    );
-
-
-
-    return Response.json({
-
-      success:true,
-
-      data:company
-
-    });
-
-
-
-  } catch(error){
-
-
-    console.error(error);
-
-
-
-    return Response.json(
-
-      {
-
-        success:false,
-
-        message:"Failed to update company"
-
-      },
-
-      {
-
-        status:500
-
-      }
-
-    );
-
-
-  }
-
+  return NextResponse.json({
+    message:"Company created",
+    company
+  });
 
 }

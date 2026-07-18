@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+
+model Company {
+  id Int @id @default(autoincrement())
+  name String
+  createdAt DateTime @default(now())
+
+  accounts Account[]
+  journals JournalEntry[]
+  users User[]
+}
+
+
+model Account {
+  id Int @id @default(autoincrement())
+  code String
+  name String
+  type String
+
+  companyId Int
+  parentId Int?
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  parent Account? @relation(
+    "AccountTree",
+    fields: [parentId],
+    references: [id]
+  )
+
+  children Account[] @relation("AccountTree")
+
+  lines JournalLine[]
+}
+
+
+model JournalEntry {
+  id Int @id @default(autoincrement())
+
+  date DateTime
+  description String?
+
+  companyId Int
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  lines JournalLine[]
+}
+
+
+model JournalLine {
+  id Int @id @default(autoincrement())
+
+  debit Float @default(0)
+  credit Float @default(0)
+
+  journalEntryId Int
+  accountId Int
+
+  journalEntry JournalEntry @relation(
+    fields: [journalEntryId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  account Account @relation(
+    fields: [accountId],
+    references: [id]
+  )
+}
+
+
+model Role {
+  id Int @id @default(autoincrement())
+
+  name String
+
+  users User[]
+}
+
+
+model User {
+  id Int @id @default(autoincrement())
+
+  name String
+  email String @unique
+
+  roleId Int
+  companyId Int
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  company Company @relation(fields: [companyId], references: [id])
+}

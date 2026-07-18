@@ -1,69 +1,149 @@
-import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
 
-export async function GET() {
+import {
+  getAccountsService,
+  createAccountService,
+} from "@/services/account.service";
+
+
+
+// =====================================
+// GET ALL ACCOUNTS
+// =====================================
+
+export async function GET(
+  request: NextRequest
+) {
+
   try {
 
-    const accounts = await prisma.account.findMany({
-      include: {
-        parent: true,
-        children: true,
-      },
-      orderBy: {
-        code: "asc",
-      },
-    });
 
-    return NextResponse.json(accounts);
+    const companyId =
+      Number(
+        request.nextUrl.searchParams.get(
+          "companyId"
+        )
+      );
 
-  } catch (error) {
+
+
+    if (!companyId) {
+
+      return NextResponse.json(
+
+        {
+          message:
+            "Company ID is required",
+        },
+
+        {
+          status: 400,
+        }
+
+      );
+
+    }
+
+
+
+
+    const accounts =
+      await getAccountsService(
+        companyId
+      );
+
+
 
     return NextResponse.json(
-      { error: "Failed to fetch accounts" },
-      { status: 500 }
+      accounts,
+      {
+        status: 200,
+      }
     );
+
+
+
+  } catch (error:any) {
+
+
+    return NextResponse.json(
+
+      {
+        message:
+          error.message ||
+          "Failed to fetch accounts",
+      },
+
+      {
+        status:500,
+      }
+
+    );
+
 
   }
+
 }
 
-export async function POST(request: Request) {
+
+
+
+// =====================================
+// CREATE ACCOUNT
+// =====================================
+
+export async function POST(
+
+  request: NextRequest
+
+) {
+
 
   try {
 
-    const body = await request.json();
 
-    const account = await prisma.account.create({
+    const body =
+      await request.json();
 
-      data: {
 
-        code: body.code,
 
-        name: body.name,
+    const account =
+      await createAccountService(
+        body
+      );
 
-        accountType: body.accountType,
 
-        normalBalance: body.normalBalance,
-
-        currency: body.currency,
-
-        isActive: body.isActive,
-
-        parentId: body.parentId,
-
-      },
-
-    });
-
-    return NextResponse.json(account);
-
-  } catch (error) {
 
     return NextResponse.json(
-      { error: "Failed to create account" },
-      { status: 500 }
+
+      account,
+
+      {
+        status:201,
+      }
+
     );
+
+
+
+  } catch(error:any){
+
+
+    return NextResponse.json(
+
+      {
+        message:
+          error.message ||
+          "Failed to create account",
+      },
+
+      {
+        status:500,
+      }
+
+    );
+
 
   }
 
