@@ -1,102 +1,72 @@
 "use client";
 
-
 import { useState } from "react";
-
-import AddAccountModal from "@/components/accounting/AddAccountModal";
-import AccountTree from "@/components/accounting/AccountTree";
 
 import useAccounts from "@/hooks/useAccounts";
 
+import AccountTable from "@/components/accounting/AccountTable";
+import AddAccountModal from "@/components/accounting/AddAccountModal";
 
 
 export default function ChartOfAccountsPage() {
 
 
-  const companyId = 3;
-
-
-const {
+  const {
     accounts,
     loading,
     error,
     refresh,
-} = useAccounts(companyId);
+  } = useAccounts();
 
 
-console.log("ACCOUNTS:", accounts);
 
+  const [open, setOpen] = useState(false);
 
 
 
   return (
 
-    <div
-      className="
-        min-h-screen
-        bg-[#071426]
-        p-8
-      "
-    >
+    <div className="space-y-8">
 
 
-
-      <div
-        className="
-          mb-8
-          flex
-          items-center
-          justify-between
-        "
-      >
-
+      <div className="flex items-center justify-between">
 
 
         <div>
 
-
-          <h1
-            className="
-              text-3xl
-              font-bold
-              text-white
-            "
-          >
-
+          <h1 className="text-3xl font-bold text-white">
             Chart of Accounts
-
           </h1>
 
 
-
-          <p
-            className="
-              mt-2
-              text-slate-400
-            "
-          >
-
+          <p className="text-slate-400">
             Manage your accounting structure
-
           </p>
-
 
         </div>
 
 
 
 
+        <button
 
+          onClick={() => setOpen(true)}
 
-        <AddAccountModal
+          className="
+          rounded-xl 
+          bg-cyan-500 
+          px-5 
+          py-3 
+          font-semibold 
+          text-black
+          hover:bg-cyan-600
+          "
 
-          companyId={companyId}
+        >
 
-          onCreated={refresh}
+          + New Account
 
-        />
-
-
+        </button>
 
 
       </div>
@@ -105,22 +75,11 @@ console.log("ACCOUNTS:", accounts);
 
 
 
-
-
       {
         loading && (
 
-          <div
-            className="
-              rounded-xl
-              bg-[#111C34]
-              p-5
-              text-white
-            "
-          >
-
+          <div className="text-slate-400">
             Loading accounts...
-
           </div>
 
         )
@@ -130,19 +89,10 @@ console.log("ACCOUNTS:", accounts);
 
 
 
-
-
       {
         error && (
 
-          <div
-            className="
-              rounded-xl
-              bg-red-500/20
-              p-5
-              text-red-400
-            "
-          >
+          <div className="rounded-lg bg-red-500/20 p-4 text-red-400">
 
             {error}
 
@@ -156,18 +106,35 @@ console.log("ACCOUNTS:", accounts);
 
 
 
-
       {
         !loading && !error && (
 
-          <AccountTree
+          <AccountTable
 
             accounts={accounts}
+
+            refresh={refresh}
 
           />
 
         )
       }
+
+
+
+
+
+      <AddAccountModal
+
+        open={open}
+
+        setOpen={setOpen}
+
+        account={null}
+
+        refresh={refresh}
+
+      />
 
 
 

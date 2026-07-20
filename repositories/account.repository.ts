@@ -6,20 +6,13 @@ import {
 } from "@/types/account";
 
 
-
 // =====================================
 // GET ALL ACCOUNTS
 // =====================================
 
-export async function getAccountsRepository(
-  companyId: number
-) {
+export async function getAccountsRepository() {
 
   return await prisma.account.findMany({
-
-    where: {
-      companyId,
-    },
 
     include: {
 
@@ -38,7 +31,6 @@ export async function getAccountsRepository(
   });
 
 }
-
 
 
 
@@ -72,17 +64,13 @@ export async function getAccountByIdRepository(
 
 
 
-
 // =====================================
 // CREATE ACCOUNT
 // =====================================
 
 export async function createAccountRepository(
-
   data: CreateAccountInput
-
 ) {
-
 
   return await prisma.account.create({
 
@@ -92,43 +80,19 @@ export async function createAccountRepository(
 
       name: data.name,
 
-      accountType: data.accountType,
+      type: data.type,
 
-      normalBalance: data.normalBalance,
-
-      currency: data.currency,
-
+      currency:
+        data.currency ?? "EGP",
 
       parentId:
         data.parentId ?? null,
 
-
-      companyId:
-        data.companyId,
-
-
-      branchId:
-        data.branchId ?? null,
-
-
-      allowPosting:
-        data.allowPosting,
-
-
-      isSystem:
-        data.isSystem,
-
+      level:
+        data.level ?? 1,
 
       isActive:
-        data.isActive,
-
-
-      level:
-        data.level,
-
-
-      description:
-        data.description ?? null,
+        data.isActive ?? true,
 
     },
 
@@ -138,20 +102,14 @@ export async function createAccountRepository(
 
 
 
-
-
 // =====================================
 // UPDATE ACCOUNT
 // =====================================
 
 export async function updateAccountRepository(
-
   id: number,
-
   data: UpdateAccountInput
-
 ) {
-
 
   return await prisma.account.update({
 
@@ -161,15 +119,11 @@ export async function updateAccountRepository(
 
     },
 
-
     data,
 
   });
 
-
 }
-
-
 
 
 
@@ -178,11 +132,8 @@ export async function updateAccountRepository(
 // =====================================
 
 export async function deleteAccountRepository(
-
-  id:number
-
+  id: number
 ) {
-
 
   return await prisma.account.delete({
 
@@ -193,6 +144,5 @@ export async function deleteAccountRepository(
     },
 
   });
-
 
 }

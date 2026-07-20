@@ -18,13 +18,9 @@ import {
 // GET ALL ACCOUNTS
 // =====================================
 
-export async function getAccountsService(
-  companyId: number
-) {
+export async function getAccountsService() {
 
-  return await getAccountsRepository(
-    companyId
-  );
+  return await getAccountsRepository();
 
 }
 
@@ -51,9 +47,7 @@ export async function getAccountByIdService(
 // =====================================
 
 export async function createAccountService(
-
   data: CreateAccountInput
-
 ) {
 
   return await createAccountRepository(
@@ -69,11 +63,8 @@ export async function createAccountService(
 // =====================================
 
 export async function updateAccountService(
-
   id: number,
-
   data: UpdateAccountInput
-
 ) {
 
   return await updateAccountRepository(
@@ -90,9 +81,7 @@ export async function updateAccountService(
 // =====================================
 
 export async function deleteAccountService(
-
   id: number
-
 ) {
 
   return await deleteAccountRepository(

@@ -7,29 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Company {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
+// =====================
+// Company
+// =====================
 
-  accounts Account[]
+model Company {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
+// =====================
+// Chart of Accounts
+// =====================
 model Account {
   id Int @id @default(autoincrement())
 
-  code String
+  code String @unique
   name String
   type String
 
   currency String @default("EGP")
 
-  companyId Int
-  parentId  Int?
+  isActive Boolean @default(true)
 
-  company Company @relation(fields: [companyId], references: [id])
+  level Int @default(1)
+
+  parentId Int?
 
   parent Account? @relation("AccountTree", fields: [parentId], references: [id])
 
   children Account[] @relation("AccountTree")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([parentId])
+  @@index([type])
 }

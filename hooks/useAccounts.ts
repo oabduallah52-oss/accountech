@@ -1,16 +1,9 @@
 "use client";
 
-
 import { useEffect, useState } from "react";
-
 import { Account } from "@/types/account";
 
-
-
-export default function useAccounts(
-  companyId: number
-) {
-
+export default function useAccounts() {
 
   const [accounts, setAccounts] = useState<Account[]>([]);
 
@@ -20,16 +13,16 @@ export default function useAccounts(
 
 
 
-
   async function fetchAccounts() {
 
     try {
 
       setLoading(true);
+      setError("");
 
 
       const response = await fetch(
-        `/api/accounts?companyId=${companyId}`
+        "/api/accounts"
       );
 
 
@@ -46,12 +39,11 @@ export default function useAccounts(
       }
 
 
-
       setAccounts(data);
 
 
 
-    } catch (err:any) {
+    } catch (err: any) {
 
 
       setError(
@@ -71,21 +63,11 @@ export default function useAccounts(
 
 
 
-
-
   useEffect(() => {
 
+    fetchAccounts();
 
-    if(companyId){
-
-      fetchAccounts();
-
-    }
-
-
-  }, [companyId]);
-
-
+  }, []);
 
 
 
@@ -101,6 +83,5 @@ export default function useAccounts(
     refresh: fetchAccounts,
 
   };
-
 
 }
