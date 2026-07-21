@@ -1,9 +1,9 @@
 import { prisma } from "./prisma";
 
-export async function getUser(username: string) {
+export async function getUser(email: string) {
   return prisma.user.findUnique({
     where: {
-      username,
+      email,
     },
     include: {
       role: true,

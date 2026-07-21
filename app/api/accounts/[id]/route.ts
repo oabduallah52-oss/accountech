@@ -80,14 +80,14 @@ export async function GET(
 
 
 
-  } catch(error:any){
+  } catch(error: unknown){
 
 
     return NextResponse.json(
 
       {
         message:
-          error.message ||
+          error instanceof Error ? error.message :
           "Failed to get account",
       },
 
@@ -165,14 +165,14 @@ export async function PUT(
 
 
 
-  } catch(error:any){
+  } catch(error: unknown){
 
 
     return NextResponse.json(
 
       {
         message:
-          error.message ||
+          error instanceof Error ? error.message :
           "Failed to update account",
       },
 
@@ -245,14 +245,14 @@ export async function DELETE(
 
 
 
-  } catch(error:any){
+  } catch(error: unknown){
 
 
     return NextResponse.json(
 
       {
         message:
-          error.message ||
+          error instanceof Error ? error.message :
           "Failed to delete account",
       },
 

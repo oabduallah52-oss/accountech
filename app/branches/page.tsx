@@ -10,7 +10,7 @@ export default function BranchesPage() {
           </h1>
 
           <p className="mt-2 text-slate-400">
-            Manage Company Branches
+            Manage Operational Branches
           </p>
         </div>
 
