@@ -7,43 +7,192 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// =====================
-// Company
-// =====================
-
-model Company {
-  id   Int    @id @default(autoincrement())
-  name String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+model CompanyProfile {
+  id          Int      @id @default(1)
+  name        String
+  legalName   String?
+  registrationNumber String?
+  taxNumber   String?
+  country     String   @default("United States")
+  city        String?
+  address     String?
+  baseCurrency String  @default("USD")
+  fiscalYearStartMonth Int @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
-// =====================
-// Chart of Accounts
-// =====================
-model Account {
-  id Int @id @default(autoincrement())
-
-  code String @unique
-  name String
-  type String
-
-  currency String @default("EGP")
-
-  isActive Boolean @default(true)
-
-  level Int @default(1)
-
-  parentId Int?
-
-  parent Account? @relation("AccountTree", fields: [parentId], references: [id])
-
-  children Account[] @relation("AccountTree")
-
+model Branch {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  city      String?
+  airportCode String?
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  updatedAt DateTime @updatedAt
+}
+
+model FiscalYear {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  startDate DateTime
+  endDate   DateTime
+  status    String   @default("OPEN")
+  periods   AccountingPeriod[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AccountingPeriod {
+  id           Int        @id @default(autoincrement())
+  fiscalYearId Int
+  name         String
+  startDate    DateTime
+  endDate      DateTime
+  status       String     @default("OPEN")
+  fiscalYear   FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([fiscalYearId, name])
+  @@index([status])
+}
+
+model Currency {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  symbol    String?
+  isBase    Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  rates     ExchangeRate[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ExchangeRate {
+  id             Int      @id @default(autoincrement())
+  currencyId     Int
+  rate           Decimal  @db.Decimal(18, 6)
+  effectiveDate  DateTime
+  currency       Currency @relation(fields: [currencyId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([currencyId, effectiveDate])
+}
+
+model NumberSeries {
+  id        Int      @id @default(autoincrement())
+  module    String
+  prefix    String
+  nextNumber Int     @default(1)
+  padding   Int      @default(5)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([module, prefix])
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  users       User[]
+  permissions RolePermission[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Permission {
+  id          Int              @id @default(autoincrement())
+  key         String           @unique
+  label       String
+  module      String
+  roles       RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  roleId    Int?
+  role      Role?    @relation(fields: [roleId], references: [id])
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SystemSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  group     String   @default("SYSTEM")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id            Int       @id @default(autoincrement())
+  code          String    @unique
+  name          String
+  accountType   String
+  normalBalance String
+  currency      String    @default("USD")
+  allowPosting  Boolean   @default(true)
+  isSystem      Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  level         Int       @default(1)
+  description   String?
+  parentId      Int?
+  parent        Account?  @relation("AccountTree", fields: [parentId], references: [id])
+  children      Account[] @relation("AccountTree")
+  journalLines  JournalLine[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([parentId])
-  @@index([type])
+  @@index([accountType])
+}
+
+model JournalEntry {
+  id          Int           @id @default(autoincrement())
+  entryNumber String        @unique
+  entryDate   DateTime
+  description String?
+  status      String        @default("DRAFT")
+  lines       JournalLine[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([entryDate])
+  @@index([status])
+}
+
+model JournalLine {
+  id             Int          @id @default(autoincrement())
+  journalEntryId Int
+  accountId      Int
+  description    String?
+  debit          Decimal      @default(0) @db.Decimal(18, 2)
+  credit         Decimal      @default(0) @db.Decimal(18, 2)
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account        Account      @relation(fields: [accountId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([accountId])
 }

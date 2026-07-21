@@ -26,12 +26,12 @@ export async function GET() {
     );
 
 
-  } catch (error: any) {
+  } catch (error: unknown) {
 
     return NextResponse.json(
       {
         message:
-          error.message ||
+          error instanceof Error ? error.message :
           "Failed to fetch accounts",
       },
       {
@@ -71,13 +71,13 @@ export async function POST(
     );
 
 
-  } catch(error: any) {
+  } catch(error: unknown) {
 
 
     return NextResponse.json(
       {
         message:
-          error.message ||
+          error instanceof Error ? error.message :
           "Failed to create account",
       },
       {

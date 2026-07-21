@@ -1,14 +1,11 @@
 import Link from "next/link";
 
 import {
-  Building2,
-  GitBranch,
   BookOpen,
   Receipt,
   Wallet,
   Plane,
   Cpu,
-  Map,
   Fuel,
   Wrench,
   FileBarChart2,
@@ -17,18 +14,6 @@ import {
 
 
 const modules = [
-  {
-    title: "Companies",
-    desc: "Manage Companies",
-    href: "/companies",
-    icon: Building2,
-  },
-  {
-    title: "Branches",
-    desc: "Manage Branches",
-    href: "/branches",
-    icon: GitBranch,
-  },
   {
     title: "Chart of Accounts",
     desc: "Financial Structure",
@@ -44,37 +29,37 @@ const modules = [
   {
     title: "Treasury",
     desc: "Cash & Banks",
-    href: "/accounting/treasury",
+    href: "/treasury",
     icon: Wallet,
   },
   {
     title: "Aircraft",
     desc: "Fleet Management",
-    href: "/operations/aircraft",
+    href: "/aircraft",
     icon: Plane,
   },
   {
     title: "Engines",
     desc: "Engine Tracking",
-    href: "/operations/engines",
+    href: "/engines",
     icon: Cpu,
   },
   {
     title: "Flights",
     desc: "Flight Operations",
-    href: "/operations/flights",
-    icon: Map,
+    href: "/flights",
+    icon: Plane,
   },
   {
     title: "Fuel",
     desc: "Fuel Control",
-    href: "/operations/fuel",
+    href: "/fuel",
     icon: Fuel,
   },
   {
     title: "Maintenance",
     desc: "Maintenance Center",
-    href: "/operations/maintenance",
+    href: "/maintenance",
     icon: Wrench,
   },
   {
@@ -84,7 +69,7 @@ const modules = [
     icon: FileBarChart2,
   },
   {
-    title: "AI Financial Advisor",
+    title: "AI Assistant",
     desc: "Smart Assistant",
     href: "/ai",
     icon: Bot,

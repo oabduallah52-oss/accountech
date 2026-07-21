@@ -1,10 +1,10 @@
-export default function FuelPage() {
+export default function TrialBalancePage() {
   return (
     <div className="space-y-6">
       <section className="rounded-3xl border border-slate-800 bg-[#111C34] p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-400">AccountTech ERP</p>
-        <h1 className="mt-3 text-4xl font-bold text-white">Fuel</h1>
-        <p className="mt-3 max-w-3xl text-slate-300">Fuel uplifts, inventory, supplier invoices, and consumption analytics.</p>
+        <h1 className="mt-3 text-4xl font-bold text-white">Trial Balance</h1>
+        <p className="mt-3 max-w-3xl text-slate-300">Account balances by period with debit and credit validation.</p>
       </section>
       <div className="grid gap-5 md:grid-cols-3">
         {["Operational Control", "Accounting Integration", "Management Reporting"].map((item) => (

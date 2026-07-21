@@ -80,10 +80,13 @@ export async function createAccountRepository(
 
       name: data.name,
 
-      type: data.type,
+      accountType: data.accountType,
+
+      normalBalance:
+        data.normalBalance,
 
       currency:
-        data.currency ?? "EGP",
+        data.currency ?? "USD",
 
       parentId:
         data.parentId ?? null,
