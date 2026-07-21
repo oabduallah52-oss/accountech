@@ -1,268 +1,86 @@
 import { NextRequest, NextResponse } from "next/server";
 
-
 import {
+  deleteAccountService,
   getAccountByIdService,
   updateAccountService,
-  deleteAccountService,
 } from "@/services/account.service";
 
-
-
-// =====================================
-// GET SINGLE ACCOUNT
-// =====================================
+function parseAccountId(id: string): number | null {
+  const parsedId = Number(id);
+  return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : null;
+}
 
 export async function GET(
-
-  request: NextRequest,
-
-  context: {
-    params: Promise<{
-      id: string;
-    }>;
-  }
-
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
-
-
   try {
+    const { id } = await context.params;
+    const accountId = parseAccountId(id);
 
-
-    const { id } =
-      await context.params;
-
-
-
-    const accountId =
-      Number(id);
-
-
-
-    const account =
-      await getAccountByIdService(
-        accountId
-      );
-
-
-
-    if (!account) {
-
-
-      return NextResponse.json(
-
-        {
-          message:
-            "Account not found",
-        },
-
-        {
-          status:404,
-        }
-
-      );
-
-
+    if (!accountId) {
+      return NextResponse.json({ message: "Account id is invalid." }, { status: 400 });
     }
 
+    const account = await getAccountByIdService(accountId);
 
+    if (!account) {
+      return NextResponse.json({ message: "Account not found." }, { status: 404 });
+    }
 
-
+    return NextResponse.json(account, { status: 200 });
+  } catch (error: unknown) {
     return NextResponse.json(
-
-      account,
-
-      {
-        status:200,
-      }
-
+      { message: error instanceof Error ? error.message : "Failed to get account." },
+      { status: 500 },
     );
-
-
-
-  } catch(error: unknown){
-
-
-    return NextResponse.json(
-
-      {
-        message:
-          error instanceof Error ? error.message :
-          "Failed to get account",
-      },
-
-      {
-        status:500,
-      }
-
-    );
-
-
   }
-
 }
-
-
-
-
-
-
-// =====================================
-// UPDATE ACCOUNT
-// =====================================
 
 export async function PUT(
-
   request: NextRequest,
-
-  context: {
-    params: Promise<{
-      id:string;
-    }>;
-  }
-
+  context: { params: Promise<{ id: string }> },
 ) {
-
-
   try {
+    const { id } = await context.params;
+    const accountId = parseAccountId(id);
 
+    if (!accountId) {
+      return NextResponse.json({ message: "Account id is invalid." }, { status: 400 });
+    }
 
-    const { id } =
-      await context.params;
+    const payload = await request.json();
+    const account = await updateAccountService(accountId, payload);
 
-
-
-    const accountId =
-      Number(id);
-
-
-
-    const body =
-      await request.json();
-
-
-
-    const account =
-      await updateAccountService(
-
-        accountId,
-
-        body
-
-      );
-
-
-
+    return NextResponse.json(account, { status: 200 });
+  } catch (error: unknown) {
     return NextResponse.json(
-
-      account,
-
-      {
-        status:200,
-      }
-
+      { message: error instanceof Error ? error.message : "Failed to update account." },
+      { status: 400 },
     );
-
-
-
-  } catch(error: unknown){
-
-
-    return NextResponse.json(
-
-      {
-        message:
-          error instanceof Error ? error.message :
-          "Failed to update account",
-      },
-
-      {
-        status:500,
-      }
-
-    );
-
-
   }
-
 }
 
-
-
-
-
-
-// =====================================
-// DELETE ACCOUNT
-// =====================================
-
 export async function DELETE(
-
-  request: NextRequest,
-
-  context: {
-    params: Promise<{
-      id:string;
-    }>;
-  }
-
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
-
-
   try {
+    const { id } = await context.params;
+    const accountId = parseAccountId(id);
 
+    if (!accountId) {
+      return NextResponse.json({ message: "Account id is invalid." }, { status: 400 });
+    }
 
-    const { id } =
-      await context.params;
+    await deleteAccountService(accountId);
 
-
-
-    const accountId =
-      Number(id);
-
-
-
-    await deleteAccountService(
-
-      accountId
-
-    );
-
-
-
+    return NextResponse.json({ message: "Account deleted successfully." }, { status: 200 });
+  } catch (error: unknown) {
     return NextResponse.json(
-
-      {
-        message:
-          "Account deleted successfully",
-      },
-
-      {
-        status:200,
-      }
-
+      { message: error instanceof Error ? error.message : "Failed to delete account." },
+      { status: 400 },
     );
-
-
-
-  } catch(error: unknown){
-
-
-    return NextResponse.json(
-
-      {
-        message:
-          error instanceof Error ? error.message :
-          "Failed to delete account",
-      },
-
-      {
-        status:500,
-      }
-
-    );
-
-
   }
-
 }

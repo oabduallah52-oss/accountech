@@ -1,91 +1,38 @@
 import {
-  getAccountsRepository,
-  getAccountByIdRepository,
   createAccountRepository,
-  updateAccountRepository,
   deleteAccountRepository,
+  getAccountByIdRepository,
+  getAccountTreeRepository,
+  getAccountsRepository,
+  updateAccountRepository,
 } from "@/repositories/account.repository";
 
-
 import {
+  AccountQueryInput,
   CreateAccountInput,
   UpdateAccountInput,
 } from "@/types/account";
 
-
-
-// =====================================
-// GET ALL ACCOUNTS
-// =====================================
-
-export async function getAccountsService() {
-
-  return await getAccountsRepository();
-
+export async function getAccountsService(filters: AccountQueryInput = {}) {
+  return getAccountsRepository(filters);
 }
 
-
-
-// =====================================
-// GET ACCOUNT BY ID
-// =====================================
-
-export async function getAccountByIdService(
-  id: number
-) {
-
-  return await getAccountByIdRepository(
-    id
-  );
-
+export async function getAccountTreeService(filters: AccountQueryInput = {}) {
+  return getAccountTreeRepository(filters);
 }
 
-
-
-// =====================================
-// CREATE ACCOUNT
-// =====================================
-
-export async function createAccountService(
-  data: CreateAccountInput
-) {
-
-  return await createAccountRepository(
-    data
-  );
-
+export async function getAccountByIdService(id: number) {
+  return getAccountByIdRepository(id);
 }
 
-
-
-// =====================================
-// UPDATE ACCOUNT
-// =====================================
-
-export async function updateAccountService(
-  id: number,
-  data: UpdateAccountInput
-) {
-
-  return await updateAccountRepository(
-    id,
-    data
-  );
-
+export async function createAccountService(data: CreateAccountInput) {
+  return createAccountRepository(data);
 }
 
+export async function updateAccountService(id: number, data: UpdateAccountInput) {
+  return updateAccountRepository(id, data);
+}
 
-
-// =====================================
-// DELETE ACCOUNT
-// =====================================
-
-export async function deleteAccountService(
-  id: number
-) {
-
-  return await deleteAccountRepository(
-    id
-  );
-
+export async function deleteAccountService(id: number) {
+  return deleteAccountRepository(id);
 }

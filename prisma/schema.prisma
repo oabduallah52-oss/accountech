@@ -145,27 +145,41 @@ model SystemSetting {
   updatedAt DateTime @updatedAt
 }
 
+enum AccountClass {
+  ASSETS
+  LIABILITIES
+  EQUITY
+  REVENUE
+  EXPENSES
+}
+
 model Account {
-  id            Int       @id @default(autoincrement())
-  code          String    @unique
-  name          String
-  accountType   String
-  normalBalance String
-  currency      String    @default("USD")
-  allowPosting  Boolean   @default(true)
-  isSystem      Boolean   @default(false)
-  isActive      Boolean   @default(true)
-  level         Int       @default(1)
-  description   String?
-  parentId      Int?
-  parent        Account?  @relation("AccountTree", fields: [parentId], references: [id])
-  children      Account[] @relation("AccountTree")
-  journalLines  JournalLine[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               Int          @id @default(autoincrement())
+  code             String       @unique
+  name             String
+  arabicName       String       @default("")
+  englishName      String       @default("")
+  accountClass     AccountClass
+  accountType      String
+  normalBalance    String
+  currency         String       @default("USD")
+  allowPosting     Boolean      @default(true)
+  controlAccount   Boolean      @default(false)
+  systemAccount    Boolean      @default(false)
+  isSystem         Boolean      @default(false)
+  isActive         Boolean      @default(true)
+  level            Int          @default(1)
+  description      String?
+  parentId         Int?
+  parent           Account?     @relation("AccountTree", fields: [parentId], references: [id])
+  children         Account[]    @relation("AccountTree")
+  journalLines     JournalLine[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   @@index([parentId])
   @@index([accountType])
+  @@index([accountClass])
 }
 
 model JournalEntry {
